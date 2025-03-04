@@ -3,18 +3,9 @@ RUN npm install -g @angular/cli
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY . .
 
 RUN npm install
 
-COPY . .
 
-RUN ng build --configuration production
-
-FROM nginx:alpine
-
-COPY --from=build /app/dist/frontend /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]
