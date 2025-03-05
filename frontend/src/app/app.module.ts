@@ -1,15 +1,25 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+
+import { AppRoutingModule } from './app.routes';
+import { LoginFormComponent } from './login/login-form/login-form.component';
+import { ProduitsListComponent } from './produits/produits-list/produits-list.component';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    LoginFormComponent,
+    ProduitsListComponent // Ajout pour éviter les erreurs
+  ],
   imports: [
     BrowserModule,
-    HttpClientModule, // ✅ Ajoute pour éviter l'erreur HttpClient
-    ReactiveFormsModule // ✅ Pour gérer les formulaires réactifs
+    FormsModule,
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [],
+
 })
-export class AppModule {}
+export class AppModule { }
