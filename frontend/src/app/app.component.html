@@ -1,1 +1,37 @@
-<router-outlet></router-outlet>
+<div class="container">
+  <!-- Contenu principal -->
+  <div class="main">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Sidebar Panier -->
+  <div class="sidebar cart">
+    <h2>🛒 Votre Panier</h2>
+
+    <div *ngIf="cartItems.length > 0; else emptyCart">
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cartItems">
+          <div class="cart-item-content">
+            <div *ngFor="let product of item.products">
+              <img [src]="product.image" alt="{{ product.name }}">
+              <div class="item-details">
+                <p class="item-name">{{ product.name }}</p>
+                <p class="item-price">{{ product.price | currency:'EUR' }}</p>
+              </div>
+            </div>
+<!--            <button class="remove-btn" (click)="removeFromCart(item, product)">✖</button>-->
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-footer">
+        <p>Total : <span class="cart-total">{{ getTotal() | currency:'EUR' }}</span></p>
+        <button class="checkout-btn">Commander</button>
+      </div>
+    </div>
+
+    <ng-template #emptyCart>
+      <p class="empty-cart">Votre panier est vide.</p>
+    </ng-template>
+  </div>
+</div>

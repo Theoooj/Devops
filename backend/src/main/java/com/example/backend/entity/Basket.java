@@ -20,4 +20,3 @@ public class Basket {
     @OneToMany
     private List<Product> products;
 }
-
