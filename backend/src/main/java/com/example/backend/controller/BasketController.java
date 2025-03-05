@@ -4,8 +4,8 @@ import com.example.backend.entity.Basket;
 import com.example.backend.service.BasketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +23,9 @@ public class BasketController {
     }
 
     @GetMapping
-    public List<Basket> getAllBaskets() {
-        return basketService.findAll();
+    public ResponseEntity<List<Basket>> getAllBaskets() {
+        List<Basket> baskets = basketService.findAll();
+        return ResponseEntity.ok(baskets);
     }
 
     @GetMapping("/{id}")
@@ -34,21 +35,28 @@ public class BasketController {
     }
 
     @PostMapping
-    public Basket createBasket(@RequestBody Basket basket) {
-        return basketService.save(basket);
+    public ResponseEntity<?> createBasket(@Validated @RequestBody Basket basket) {
+        if (basket.getProducts() == null) {
+            return ResponseEntity.badRequest().body("Le panier ne peut pas être null");
+        }
+        return ResponseEntity.ok(basketService.save(basket));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Basket> updateBasket(@PathVariable Long id, @RequestBody Basket basketDetails) {
+    public ResponseEntity<?> updateBasket(@PathVariable Long id, @Validated @RequestBody Basket basketDetails) {
+        if (basketDetails.getProducts() == null) {
+            return ResponseEntity.badRequest().body("Le panier ne peut pas être null");
+        }
         return basketService.updateBasket(id, basketDetails)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBasket(@PathVariable Long id) {
-        return basketService.delete(id) ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteBasket(@PathVariable Long id) {
+        if (basketService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(404).body("Le panier avec l'ID spécifié n'existe pas");
     }
 }

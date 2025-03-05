@@ -4,6 +4,7 @@ import com.example.backend.entity.Product;
 import com.example.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +33,24 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.save(product);
+    public ResponseEntity<?> createProduct(@Validated @RequestBody Product product) {
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Le nom du produit ne peut pas être vide");
+        }
+        if (product.getPrice() < 0) {
+            return ResponseEntity.badRequest().body("Le prix ne peut pas être négatif");
+        }
+        return ResponseEntity.ok(productService.save(product));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @Validated @RequestBody Product productDetails) {
+        if (productDetails.getName() == null || productDetails.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Le nom du produit ne peut pas être vide");
+        }
+        if (productDetails.getPrice() < 0) {
+            return ResponseEntity.badRequest().body("Le prix ne peut pas être négatif");
+        }
         return productService.updateProduct(id, productDetails)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -50,4 +63,3 @@ public class ProductController {
                 ResponseEntity.notFound().build();
     }
 }
-
