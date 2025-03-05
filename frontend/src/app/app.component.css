@@ -3,6 +3,8 @@
 * {
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -13,8 +15,8 @@
 
 .main {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: start;
+  justify-content: left;
 }
 
 .cart {
@@ -22,7 +24,7 @@
   display: flex;
   flex-direction: column;
   border-left: 1px solid #e0e0e0;
-  height: 100vh; /* Prend toute la hauteur */
+  height: 100vh;
 }
 
 .cart h2 {
@@ -46,13 +48,25 @@
   border-bottom: 1px solid #ddd;
 }
 
+/* Nouvelle disposition pour aligner l'image et les détails horizontalement */
+.cart-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
 .cart-item img {
   width: 50px;
   height: 50px;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .item-details {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
 }
 
