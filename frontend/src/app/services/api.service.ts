@@ -26,7 +26,7 @@ export class ApiService {
     console.log(msg);
     return throwError(() => new Error(msg));
   }
- 
+
   public sendGetRequest<T>(path: string, headers: HttpHeaders | null): Observable<T> {
     if (headers == null) {
       headers = ApiService.DEFAULT_HEADERS;

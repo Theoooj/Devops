@@ -21,6 +21,7 @@ export class LoginFormComponent implements OnInit{
   ngOnInit(): void {
     this.userService.getAllUsers().subscribe((data: User[])=>{
       this.users = data
+      console.log(this.users)
     })
   }
 }
