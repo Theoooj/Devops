@@ -21,7 +21,7 @@ h2 {
 input[type="email"],
 input[type="password"],
 button {
-    width: 80%; /* Assure que les champs et le bouton ont la même largeur */
+    width: 100%; /* Assure que les champs et le bouton ont la même largeur */
     padding: 12px;
     margin-top: 8px;
     margin-bottom: 16px;
