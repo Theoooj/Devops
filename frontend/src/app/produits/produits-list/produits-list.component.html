@@ -1,1 +1,14 @@
-<p>Liste produits</p>
+<div class="product-container">
+    @for (produit of produits; track produit.id) {
+        <div class="product-card">
+            <img src="https://eu-images.contentstack.com/v3/assets/blt167b24547e5b1906/bltfc47ae3a0d6d1f5a/65e9b7046dc76f040a6a36df/27_Thermosync_Hybrid_v2_Card_Desktop.jpg?format=pjpg&auto=webp&quality=80&width=1920&disable=upscale" alt="{{ produit.name }}" class="product-image" />
+            <div class="product-info">
+                <h3>{{ produit.name }}</h3>
+                <p class="product-description">{{ produit.description }}</p>
+                <p class="product-price">{{ produit.price }}€</p>
+                <button class="btn-buy">Acheter</button>
+            </div>
+        </div>
+    }
+</div>
+

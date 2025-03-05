@@ -15,7 +15,6 @@ export class ApiService {
     'Content-Type': 'application/x-www-form-urlencoded',
   });
 
-
   constructor(private http: HttpClient) {}
 
   httpError(error: HttpErrorResponse) {
@@ -88,5 +87,20 @@ export class ApiService {
     return this.http
       .delete<T>(path, httpOptions)
       .pipe(retry(1), catchError(this.httpError));
+  }
+
+  public uploadfile(file: File): Observable<string> {
+    let formParams = new FormData();
+    formParams.append('file', file);
+    let httpOptions: Object = {
+        observe: 'body',
+        responseType: 'text',
+    };
+    let url: string = '/image/upload';
+    return this.http
+        .post<string>(url, formParams, httpOptions)
+        .pipe(
+            retry(1)
+        );
   }
 }

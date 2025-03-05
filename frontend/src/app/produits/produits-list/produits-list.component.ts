@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProduitService } from '../../services/produit/produit.service';
+import { Produit } from '../../interfaces/product';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-produits-list',
@@ -6,7 +9,20 @@ import { Component } from '@angular/core';
   templateUrl: './produits-list.component.html',
   styleUrl: './produits-list.component.css'
 })
-export class ProduitsListComponent {
+export class ProduitsListComponent implements OnInit{
+  produits: Produit[]= [];
 
-  constructor(){}
+  constructor(private produitService: ProduitService){
+
+  }
+
+  ngOnInit(): void {
+    this.produitService.getAllProducts().subscribe((data: Produit[]) => {
+      this.produits = data;
+      for(let produit of this.produits){
+        console.log(produit.srcUrl)
+      }
+    });
+  }
+  
 }
