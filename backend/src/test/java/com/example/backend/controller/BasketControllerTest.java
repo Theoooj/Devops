@@ -100,6 +100,14 @@ public class BasketControllerTest {
     }
 
     @Test
+    public void testGetBasketById_NonExistingBasket_ReturnsNotFound() throws Exception {
+        when(basketService.findById(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/baskets/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testCreateBasket_ValidBasket_ReturnsCreatedBasket() throws Exception {
         when(basketService.save(any(Basket.class))).thenReturn(testBasket);
 
@@ -110,6 +118,16 @@ public class BasketControllerTest {
                 .andExpect(jsonPath("$.id", is(1)));
 
         verify(basketService).save(any(Basket.class));
+    }
+
+    @Test
+    public void testCreateBasket_InvalidBasket_ReturnsBadRequest() throws Exception {
+        Basket invalidBasket = new Basket();
+
+        mockMvc.perform(post("/baskets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidBasket)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
