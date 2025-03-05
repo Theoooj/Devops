@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, retry, throwError } from 'rxjs';
 
@@ -11,6 +11,10 @@ export class ApiService {
   public static DEFAULT_HEADERS: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
   });
+  public static FORM_HEADERS: HttpHeaders = new HttpHeaders({
+    'Content-Type': 'application/x-www-form-urlencoded',
+  });
+
 
   constructor(private http: HttpClient) {}
 
@@ -38,6 +42,51 @@ export class ApiService {
     };
     return this.http
       .get<T>(path, httpOptions)
+      .pipe(retry(1), catchError(this.httpError));
+  }
+
+  public sendPostRequest<T>(path: string, params: HttpParams, headers: HttpHeaders | null): Observable<T> {
+    if (headers == null) {
+      headers = ApiService.DEFAULT_HEADERS;
+    }
+    let httpOptions: Object = {
+      observe: 'body',
+      responseType: 'json',
+      headers: headers,
+    };
+    return this.http
+      .post<T>(path, params, httpOptions)
+      .pipe(retry(1), catchError(this.httpError));
+  }
+
+  public sendPutRequest<T>(path: string, params: HttpParams, headers: HttpHeaders | null): Observable<T> {
+    if (headers == null) {
+      headers = ApiService.DEFAULT_HEADERS;
+    }
+    let httpOptions: Object = {
+      observe: 'body',
+      responseType: 'json',
+      headers: headers,
+    };
+    return this.http
+      .put<T>(path, params, httpOptions)
+      .pipe(retry(1), catchError(this.httpError));
+  }
+
+  public sendDeleteRequest<T>(
+    path: string,
+    headers: HttpHeaders | null
+  ): Observable<T> {
+    if (headers == null) {
+      headers = ApiService.FORM_HEADERS
+    }
+    let httpOptions: Object = {
+      observe: 'response',
+      responseType: 'json',
+      headers: headers,
+    };
+    return this.http
+      .delete<T>(path, httpOptions)
       .pipe(retry(1), catchError(this.httpError));
   }
 }

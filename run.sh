@@ -30,4 +30,4 @@ echo -e "\n\033[1;32m✅ Build Maven réussi !\033[0m"
 cd .. || { echo -e "\033[1;31m❌ Erreur : Impossible de revenir au dossier principal !\033[0m"; exit 1; }
 
 echo -e "\n\033[1;33m🚀 Démarrage de tous les services Docker...\033[0m"
-docker-compose up -d backend
+docker-compose up --build -d backend
