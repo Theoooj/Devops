@@ -21,8 +21,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    depends_on:
-      - backend
     command: ["ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
 
   mysql:
@@ -35,6 +33,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  tests:
+    build:
+      context: ./tests
+      dockerfile: Dockerfile
+    depends_on:
+      - frontend
 
 volumes:
   mysql_data:
