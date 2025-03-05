@@ -95,6 +95,34 @@ public class BasketServiceTest {
     }
 
     @Test
+    public void testUpdateBasket_ExistingBasket_UpdatesCorrectly() {
+        Basket existingBasket = new Basket();
+        existingBasket.setId(1L);
+
+        Basket updateDetails = new Basket();
+        updateDetails.setProducts(Collections.emptyList());
+
+        when(basketRepository.findById(1L)).thenReturn(Optional.of(existingBasket));
+        when(basketRepository.save(any(Basket.class))).thenReturn(existingBasket);
+
+        Optional<Basket> updatedBasket = basketService.updateBasket(1L, updateDetails);
+
+        assertTrue(updatedBasket.isPresent());
+        assertTrue(updatedBasket.get().getProducts().isEmpty());
+    }
+
+    @Test
+    public void testUpdateBasket_NonExistingBasket_ReturnsEmptyOptional() {
+        Basket updateDetails = new Basket();
+
+        when(basketRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Optional<Basket> updatedBasket = basketService.updateBasket(99L, updateDetails);
+
+        assertTrue(updatedBasket.isEmpty());
+    }
+
+    @Test
     public void testDelete_ExistingBasket_ReturnsTrue() {
         when(basketRepository.findById(1L)).thenReturn(Optional.of(testBasket));
         doNothing().when(basketRepository).delete(testBasket);

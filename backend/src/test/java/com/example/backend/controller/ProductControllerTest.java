@@ -78,6 +78,35 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void testGetAllProducts_ReturnsProductList() throws Exception {
+        List<Product> products = Arrays.asList(testProduct);
+        when(productService.findAll()).thenReturn(products);
+
+        mockMvc.perform(get("/products"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is("Test Product")));
+    }
+
+    @Test
+    public void testGetProductById_ExistingProduct_ReturnsProduct() throws Exception {
+        when(productService.findById(1L)).thenReturn(Optional.of(testProduct));
+
+        mockMvc.perform(get("/products/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Test Product")))
+                .andExpect(jsonPath("$.price", is(19.0)));
+    }
+
+    @Test
+    public void testGetProductById_NonExistingProduct_ReturnsNotFound() throws Exception {
+        when(productService.findById(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/products/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testCreateProduct_ValidProduct_ReturnsCreatedProduct() throws Exception {
         Product newProduct = new Product();
         newProduct.setName("New Product");
