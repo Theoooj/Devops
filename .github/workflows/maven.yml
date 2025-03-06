@@ -29,7 +29,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'temurin'
+          distribution: 'temurin' 
           cache: maven
 
       # Build Backend with Maven
@@ -43,8 +43,8 @@ jobs:
         run: mvn test
 
       # Install Angular
-      - name: Install Angular 12.2.7
-        run: npm install -g @angular/cli@12.2.7
+      - name: Install Angular
+        run: npm install -g @angular/cli@latest
 
       # Install Frontend dependencies & run tests
       - name: Install dependencies & run tests
