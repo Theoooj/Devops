@@ -56,7 +56,7 @@ jobs:
         working-directory: frontend
         run: |
           npm install
-          npm test
+          ng test --browsers=ChromeHeadless --progress=false --watch=false --code-coverage --source-map=false
 
       # Docker login
       - name: Set up Docker Buildx
