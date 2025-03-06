@@ -11,6 +11,12 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
     depends_on:
       - mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   frontend:
     build:
@@ -18,11 +24,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4200:4200"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: ["ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
-
+      
   mysql:
     image: mysql:8.0
     restart: always

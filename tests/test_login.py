@@ -25,7 +25,7 @@ def test_login():
 
         assert "dashboard" in driver.current_url, "Redirection après connexion échouée"
 
-        print("Test de connexion réussi !")
+        print("Test de connexion réussi §§§!")
 
     finally:
         driver.quit()
