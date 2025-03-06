@@ -46,7 +46,7 @@ describe('LoginFormComponent', () => {
 
     expect(authServiceSpy.login).toHaveBeenCalledWith(component.loginData);
     expect(localStorage.getItem('token')).toBe(fakeToken.token);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/produits']);
   });
 
   /**  Test 2 : Vérifier le message d'erreur en cas d'identifiants incorrects */
