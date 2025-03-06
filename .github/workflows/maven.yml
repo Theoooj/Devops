@@ -46,6 +46,11 @@ jobs:
       - name: Install Angular
         run: npm install -g @angular/cli@latest
 
+      # Install Chrome
+        steps:
+          - uses: browser-actions/setup-chrome@v1
+          - run: chrome --version
+
       # Install Frontend dependencies & run tests
       - name: Install dependencies & run tests
         working-directory: frontend
