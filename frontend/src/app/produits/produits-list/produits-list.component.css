@@ -1,13 +1,13 @@
 .product-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .product-card {
     background: #fff;
     border-radius: 12px;
+    margin: 1.5%;
+    width: 22%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease-in-out;
