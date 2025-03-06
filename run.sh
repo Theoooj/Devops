@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 echo -e "\n\033[1;34m🚀 Démarrage du build...\033[0m"
 

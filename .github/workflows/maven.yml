@@ -46,12 +46,17 @@ jobs:
       - name: Install Angular
         run: npm install -g @angular/cli@latest
 
+      # Install Chrome
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+
       # Install Frontend dependencies & run tests
       - name: Install dependencies & run tests
         working-directory: frontend
         run: |
           npm install
-          npm test
+          ng test --browsers=ChromeHeadless --progress=false --watch=false --code-coverage --source-map=false
 
       # Docker login
       - name: Set up Docker Buildx
