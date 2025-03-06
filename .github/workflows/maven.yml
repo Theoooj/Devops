@@ -7,31 +7,103 @@
 # documentation.
 
 name: Java CI with Maven
+
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+    branches: [ "dev" ]
+    
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: devops
+        ports:
+          - "3306:3306"
+        volumes:
+          - mysql_data:/var/lib/mysql
+
     steps:
-    - uses: actions/checkout@v4
+      # Checkout the repository
+      - uses: actions/checkout@v4
+
+      # Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Move backend    
+        run: cd backend
+
+      - name: Build with Maven
+        run: mvn clean verify
     
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: maven
-    
-    - name: Build with Maven
-      run: mvn clean verify
-    
-    - name: Run tests
-      run: mvn test
-    
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      - name: Run tests
+        run: mvn test
+
+      - name: Install Angular 12.2.7
+        uses: actions/angular-github-actions
+        with:
+          version: 12.2.7
+
+      - name: move frontend
+        run: cd ../frontend
+      - name: Run npm test
+
+      # Docker login
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: move to base directory
+        run: cd ..
+
+      - name: create images
+        run: |
+        docker build -t acouderc1/front ./frontend/Dockerfile 
+        docker build -t acouderc1/back ./backend/Dockerfile 
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+        continue-on-error: false
+
+      - name: launch containers 
+        run: |
+        # a voir
+
+      # Install selenium
+      - name : install selenium
+        run: pip install selenium
+
+      # bon rep
+      - name : move rep
+        run: cd front/tests
+
+      # Run test selenium
+      - name : selenium test
+        run: python StartTest.py 
+
+      - name: push images
+        run: |
+        docker push acouderc1/front
+        docker push acouderc1/back
+
+
+      # Update dependency graph (optional)
+      #- name: Update dependency graph
+      #  uses: advanced-security/maven-dependency-submission-action@v3
