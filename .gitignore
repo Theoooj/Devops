@@ -1,0 +1,68 @@
+# --- IDE et éditeurs ---
+.idea/
+.vscode/
+*.iml
+*.log
+
+# --- Fichiers système ---
+.DS_Store
+Thumbs.db
+
+# --- Backend (Java Spring Boot) ---
+# Build & dépendances
+**/target/
+**/out/
+**/build/
+**/.gradle/
+**/.mvn/
+**/mvnw*
+**/pom.xml.tag.gz
+
+# Logs et fichiers temporaires
+**/logs/
+**/*.log
+**/tmp/
+**/*.war
+**/*.jar
+**/hs_err_pid*
+
+# Configuration sensible
+**/application.properties
+**/application.yml
+**/application-*.yml
+**/application-*.properties
+**/local.env
+
+# --- Frontend (Angular) ---
+node_modules/
+dist/
+yarn.lock
+package-lock.json
+.npm/
+angular.json
+
+# --- Environnement et secrets ---
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*
+!.env.example
+
+# --- Autres fichiers générés ---
+npm-debug.log*
+yarn-error.log
+coverage/
+.sass-cache/
+*.bak
+*.swp
+
+# --- Fichiers de déploiement ---
+.deploy/
+/.cache/
+/output/
+public/
+**/.firebase/
+.firebaserc
+**/.vscode/
