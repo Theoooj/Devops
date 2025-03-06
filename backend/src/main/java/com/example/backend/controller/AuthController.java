@@ -20,9 +20,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthRequestDTO request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequestDTO request) {
         String token = authService.authenticate(request);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping("/register")
