@@ -72,8 +72,8 @@ jobs:
 
       - name: create images
         run: |
-        docker build -t acouderc1/front ./frontend/Dockerfile 
-        docker build -t acouderc1/back ./backend/Dockerfile 
+          docker build -t acouderc1/front ./frontend/Dockerfile 
+          docker build -t acouderc1/back ./backend/Dockerfile 
 
       - name: Install Docker Compose
         run: |
@@ -100,8 +100,8 @@ jobs:
 
       - name: push images
         run: |
-        docker push acouderc1/front
-        docker push acouderc1/back
+          docker push acouderc1/front
+          docker push acouderc1/back
 
 
       # Update dependency graph (optional)
