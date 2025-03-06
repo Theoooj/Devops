@@ -22,14 +22,12 @@ export class LoginFormComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    // Vérifier si l'utilisateur est bloqué temporairement
     if (this.failedAttempts >= this.maxAttempts) {
       const currentTime = Date.now();
       if (this.lastFailedAttemptTime && currentTime - this.lastFailedAttemptTime < this.lockoutDuration) {
         this.errorMessage = 'Trop de tentatives échouées. Veuillez réessayer plus tard.';
         return;
       } else {
-        // Réinitialiser après le délai
         this.failedAttempts = 0;
         this.lastFailedAttemptTime = null;
       }
@@ -54,7 +52,7 @@ export class LoginFormComponent {
       next: (response: { token: string }) => {
         localStorage.setItem('token', response.token);
         this.router.navigate(['/dashboard']);
-        this.failedAttempts = 0; // Réinitialisation des tentatives après un succès
+        this.failedAttempts = 0;
       },
       error: () => {
         this.failedAttempts++;

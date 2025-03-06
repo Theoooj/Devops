@@ -44,19 +44,22 @@ export class ApiService {
       .pipe(retry(1), catchError(this.httpError));
   }
 
-  public sendPostRequest<T>(path: string, params: HttpParams, headers: HttpHeaders | null): Observable<T> {
+  public sendPostRequest<T>(path: string, body: any, headers: HttpHeaders | null): Observable<T> {
     if (headers == null) {
       headers = ApiService.DEFAULT_HEADERS;
     }
-    let httpOptions: Object = {
-      observe: 'body',
-      responseType: 'json',
+  
+    const httpOptions = {
+      observe: 'body' as const,
+      responseType: 'json' as const,
       headers: headers,
     };
+  
     return this.http
-      .post<T>(path, params, httpOptions)
+      .post<T>(path, body, httpOptions)
       .pipe(retry(1), catchError(this.httpError));
   }
+  
 
   public sendPutRequest<T>(path: string, params: HttpParams, headers: HttpHeaders | null): Observable<T> {
     if (headers == null) {
