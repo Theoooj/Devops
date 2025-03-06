@@ -1,17 +1,9 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Java CI with Maven
 
 on:
   push:
     branches: [ "TestCI" ]
-    
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,7 +12,7 @@ jobs:
       mysql:
         image: mysql:8.0
         restart: always
-        environment:
+        env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: devops
         ports:
@@ -30,7 +22,8 @@ jobs:
 
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # Set up JDK 21
       - name: Set up JDK 21
@@ -39,23 +32,27 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Move backend    
-        run: cd backend
 
-      - name: Build with Maven
+      # Build Backend with Maven
+      - name: Build Backend with Maven
+        working-directory: backend
         run: mvn clean verify
-    
-      - name: Run tests
+
+      # Run tests
+      - name: Run Backend Tests
+        working-directory: backend
         run: mvn test
 
+      # Install Angular
       - name: Install Angular 12.2.7
-        uses: actions/angular-github-actions
-        with:
-          version: 12.2.7
+        run: npm install -g @angular/cli@12.2.7
 
-      - name: move frontend
-        run: cd ../frontend
-      - name: Run npm test
+      # Install Frontend dependencies & run tests
+      - name: Install dependencies & run tests
+        working-directory: frontend
+        run: |
+          npm install
+          npm test
 
       # Docker login
       - name: Set up Docker Buildx
@@ -67,43 +64,36 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: move to base directory
-        run: cd ..
-
-      - name: create images
+      # Build Docker images
+      - name: Build Docker images
         run: |
-          docker build -t acouderc1/front ./frontend/Dockerfile 
-          docker build -t acouderc1/back ./backend/Dockerfile 
+          docker build -t acouderc1/front -f frontend/Dockerfile frontend
+          docker build -t acouderc1/back -f backend/Dockerfile backend
 
+      # Install Docker Compose
       - name: Install Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
-        continue-on-error: false
 
-      - name: launch containers 
+      # Launch containers
+      - name: Launch containers
+        run: docker-compose up -d
+
+      # Install Selenium
+      - name: Install Selenium
         run: |
-        # a voir
+          pip install -U pip
+          pip install selenium
 
-      # Install selenium
-      - name : install selenium
-        run: pip install selenium
+      # Run Selenium tests
+      - name: Run Selenium tests
+        working-directory: frontend/tests
+        run: python StartTest.py
 
-      # bon rep
-      - name : move rep
-        run: cd front/tests
-
-      # Run test selenium
-      - name : selenium test
-        run: python StartTest.py 
-
-      - name: push images
+      # Push images to Docker Hub
+      - name: Push Docker images
         run: |
           docker push acouderc1/front
           docker push acouderc1/back
-
-
-      # Update dependency graph (optional)
-      #- name: Update dependency graph
-      #  uses: advanced-security/maven-dependency-submission-action@v3
