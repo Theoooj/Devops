@@ -19,6 +19,11 @@ jobs:
         volumes:
           - mysql_data:/var/lib/mysql
 
+      selenium:
+        image: selenium/standalone-chrome
+        ports:
+          - "4444:4444
+
     steps:
       # Checkout the repository
       - name: Checkout repository
