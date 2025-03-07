@@ -3,11 +3,13 @@ from selenium import webdriver
 import time
 
 FRONTEND_URL = "http://frontend:4200"
+SELENIUM_URL = "http://localhost:4444/wd/hub"
+
 
 def test_login():
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")  
-    driver = webdriver.Remote(command_executor="http://selenium:4444/wd/hub", options=options)
+    driver = webdriver.Remote(command_executor=SELENIUM_URL, options=options)
 
 
     try:
