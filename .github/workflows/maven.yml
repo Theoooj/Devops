@@ -93,11 +93,6 @@ jobs:
           docker ps -q | xargs -r docker stop
           docker network prune -f
 
-      - name: Launch containers
-        run: |
-          docker-compose up -d
-          sleep 15
-
 
       # Install Selenium
       - name: Install Selenium
