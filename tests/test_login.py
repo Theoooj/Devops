@@ -29,4 +29,5 @@ def test_login():
         print("Test de connexion réussi §§§!")
 
     finally:
+        print('Fin du test')
         driver.quit()

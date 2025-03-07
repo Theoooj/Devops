@@ -10,13 +10,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
     depends_on:
-      - mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
+      mysql:
+        condition: service_healthy
 
   frontend:
     build:
@@ -24,7 +19,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4200:4200"
-      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
   mysql:
     image: mysql:8.0
     restart: always
@@ -35,13 +35,33 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   tests:
     build:
       context: ./tests
       dockerfile: Dockerfile
     depends_on:
-      - frontend
+      selenium:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
 
 volumes:
   mysql_data:
