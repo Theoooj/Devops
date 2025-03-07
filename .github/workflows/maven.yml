@@ -16,13 +16,13 @@ jobs:
           MYSQL_DATABASE: devops
         ports:
           - "3306:3306"
-        options: --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot" --health-interval=10s --health-timeout=5s --health-retries=3
-      
+        volumes:
+          - mysql_data:/var/lib/mysql
+
       selenium:
-        image: selenium/standalone-chrome:latest
+        image: selenium/standalone-chrome
         ports:
           - "4444:4444"
-        options: --shm-size=2g
 
     steps:
       # Checkout the repository
@@ -47,108 +47,21 @@ jobs:
         working-directory: backend
         run: mvn test
 
-      # Install Node.js (version spécifique pour assurer la compatibilité)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-
-      # Install Angular CLI globalement
-      - name: Install Angular CLI
+      # Install Angular
+      - name: Install Angular
         run: npm install -g @angular/cli@latest
 
-      # Install Frontend dependencies
-      - name: Install Frontend dependencies
-        working-directory: frontend
-        run: npm install
+      # Install Chrome
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
 
-      # Run Frontend unit tests
-      - name: Run Frontend unit tests
+
+      # Install Frontend dependencies & run tests
+      - name: Install dependencies & run tests
         working-directory: frontend
         run: |
+          npm install
           ng test --browsers=ChromeHeadless --progress=false --watch=false --code-coverage --source-map=false
-
-      # Vérifier que Selenium est prêt
-      - name: Vérifier que Selenium est prêt
-        run: |
-          echo "Vérification de la disponibilité de Selenium..."
-          for i in {1..12}; do
-            if curl -s http://localhost:4444/wd/hub/status | grep -q "\"ready\": true"; then
-              echo "Selenium est prêt!"
-              break
-            fi
-            echo "Attente de Selenium... ($i/12)"
-            sleep 5
-          done
-          curl -s http://localhost:4444/wd/hub/status || echo "Impossible de connecter à Selenium"
-
-      # Build and serve the frontend (avec plus de temps d'attente)
-      - name: Build and serve frontend
-        working-directory: frontend
-        run: |
-          echo "Construction du frontend..."
-          ng build --configuration=production
-          echo "Démarrage du serveur frontal..."
-          nohup ng serve --host 0.0.0.0 --port 4200 --disable-host-check &
-          PID=$!
-          echo "Processus frontend démarré avec PID: $PID"
-          
-          # Attendre que le frontend soit disponible
-          echo "Attente du démarrage du frontend..."
-          MAX_ATTEMPTS=30
-          ATTEMPTS=0
-          READY=false
-          while [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
-            if curl -s http://localhost:4200 > /dev/null; then
-              echo "Frontend est prêt!"
-              READY=true
-              break
-            fi
-            ATTEMPTS=$((ATTEMPTS+1))
-            echo "Attente du frontend... ($ATTEMPTS/$MAX_ATTEMPTS)"
-            sleep 2
-          done
-          
-          if [ "$READY" = false ]; then
-            echo "Frontend n'a pas démarré correctement. Vérification des logs:"
-            cat nohup.out
-            exit 1
-          fi
-
-      # Debug des services
-      - name: Debug des services
-        run: |
-          echo "== Vérification des ports ouverts =="
-          netstat -tuln | grep -E '4200|4444|8080|3306'
-          echo "== Vérification des processus en cours =="
-          ps aux | grep -E 'selenium|ng serve'
-          echo "== Vérification du service Selenium =="
-          curl -v http://localhost:4444/wd/hub/status || echo "Selenium n'est pas accessible"
-          echo "== Vérification du frontend =="
-          curl -v http://localhost:4200 || echo "Frontend n'est pas accessible"
-          echo "== Contenu du répertoire frontend =="
-          ls -la frontend/
-          echo "== Logs du frontend =="
-          cat frontend/nohup.out || echo "Pas de logs trouvés"
-
-      # Install Python and Selenium
-      - name: Install Python and Selenium
-        run: |
-          python -m pip install --upgrade pip
-          pip install selenium pytest
-
-      # Run Selenium tests avec délai supplémentaire
-      - name: Run Selenium tests
-        working-directory: tests
-        env:
-          FRONTEND_URL: "http://localhost:4200"
-          SELENIUM_URL: "http://localhost:4444/wd/hub"
-        run: |
-          echo "Attente supplémentaire pour s'assurer que le frontend est complètement initialisé..."
-          sleep 15
-          python StartTest.py
 
       # Docker login
       - name: Set up Docker Buildx
@@ -160,11 +73,37 @@ jobs:
           username: "${{ secrets.DOCKERHUB_USERNAME }}"
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
 
+
       # Build Docker images
       - name: Build Docker images
         run: |
           docker build -t acouderc1/front -f frontend/Dockerfile frontend
           docker build -t acouderc1/back -f backend/Dockerfile backend
+
+      # Install Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      # Stop all running containers to free up ports
+      - name: Stop existing containers
+        run: |
+          docker ps -q | xargs -r docker stop
+          docker network prune -f
+
+
+      # Install Selenium
+      - name: Install Selenium
+        run: |
+          pip install -U pip
+          pip install selenium
+
+      # Run Selenium tests
+      - name: Run Selenium tests
+        working-directory: tests
+        run: python StartTest.py
 
       # Push images to Docker Hub
       - name: Push Docker images

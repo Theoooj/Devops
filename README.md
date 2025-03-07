@@ -1,7 +1,7 @@
 # README devops
 
 # Tests unitaires
- 
+
 ## Introduction
 
 ### Ce projet utilise JUnit et Mockito pour réaliser des tests unitaires complets sur les services et contrôleurs de l'application. Les tests visent à garantir le bon fonctionnement de chaque composant individuellement.
