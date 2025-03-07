@@ -100,7 +100,7 @@ jobs:
 
       # Run Selenium tests
       - name: Run Selenium tests
-        working-directory: frontend/tests
+        working-directory: /home/runner/work/Devops/tests
         run: python StartTest.py
 
       # Push images to Docker Hub
