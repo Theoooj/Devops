@@ -25,7 +25,7 @@ export class CartService {
             { id: idProduct }
         ]
     };
-    return this.api.sendPostRequest(CartService.CART_URL + '/baskets', body, null);
+    return this.api.sendPostRequest(CartService.CART_URL, body, null);
   }
 
 }

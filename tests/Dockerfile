@@ -8,6 +8,6 @@ WORKDIR /app
 
 COPY . /app
 
-USER seluser
+RUN sudo pip install selenium --break-system-packages
 
 CMD ["python", "StartTest.py"]

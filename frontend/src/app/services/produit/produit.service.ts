@@ -15,7 +15,6 @@ export class ProduitService {
   }
 
   getAllProducts(): Observable<Produit[]>{
-      console.log(ProduitService.PRODUCTS_URL)
       return this.api.sendGetRequest(ProduitService.PRODUCTS_URL, null);
-    }
+  }
 }
