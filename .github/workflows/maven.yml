@@ -82,6 +82,12 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
+      # Stop all running containers to free up ports
+      - name: Stop existing containers
+        run: |
+          docker ps -q | xargs -r docker stop
+          docker network prune -f
+
       # Launch containers
       - name: Launch containers
         run: docker-compose up -d
