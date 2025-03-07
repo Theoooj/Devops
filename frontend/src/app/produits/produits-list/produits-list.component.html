@@ -6,7 +6,7 @@
                 <h3>{{ produit.name }}</h3>
                 <p class="product-description">{{ produit.description }}</p>
                 <p class="product-price">{{ produit.price }}€</p>
-                <button class="btn-buy">Acheter</button>
+                <button class="btn-buy" (click)="addProductToBasket(produit.id)">Acheter</button>
             </div>
         </div>
     }

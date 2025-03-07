@@ -16,7 +16,6 @@ export class UserServiceService {
   ) {}
 
   getAllUsers(): Observable<User[]>{
-    console.log(UserServiceService.USER_URL)
     return this.api.sendGetRequest(UserServiceService.USER_URL, null);
   }
 
