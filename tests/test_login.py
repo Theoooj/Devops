@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
 
-FRONTEND_URL = "http://frontend:4200"
+FRONTEND_URL = "http://localhost:4200"
 
 def test_login():
     options = webdriver.ChromeOptions()
