@@ -19,11 +19,6 @@ jobs:
         volumes:
           - mysql_data:/var/lib/mysql
 
-      selenium:
-        image: selenium/standalone-chrome
-        ports:
-          - "4444:4444"
-
     steps:
       # Checkout the repository
       - name: Checkout repository
@@ -93,6 +88,9 @@ jobs:
           docker ps -q | xargs -r docker stop
           docker network prune -f
 
+      # Launch containers
+      - name: Launch containers
+        run: docker-compose up -d
 
       # Install Selenium
       - name: Install Selenium
