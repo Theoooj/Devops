@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import com.example.backend.service.CustomUserDetailsService;
 import com.example.backend.token.JwtAuthenticationFilter;
 import com.example.backend.token.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
